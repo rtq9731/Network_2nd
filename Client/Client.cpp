@@ -16,8 +16,78 @@
 #define DEFAULT_BUFLEN 512
 #define DEFAULT_PORT "27015"
 
+void draw(int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = n; j > i; j--)
+        {
+            printf(" ");
+        }
+
+        for (int k = 0; k < i; k++)
+        {
+            if (k == 0)
+            {
+                printf("*"); continue;
+            }
+            printf(" ");
+        }
+
+        for (int k = 0; k < i; k++)
+        {
+            printf(" ");
+        }
+
+        for (int j = n; j > i; j--)
+        {
+            if (j == n)
+            {
+                printf("*"); continue;
+            }
+            printf(" ");
+        }
+        printf("\n");
+    }
+
+    for (int i = n; i >= 0; i--)
+    {
+        for (int j = n; j > i; j--)
+        {
+            printf(" ");
+        }
+
+        for (int k = 0; k < i; k++)
+        {
+            if (k == 0)
+            {
+                printf("*"); continue;
+            }
+            printf(" ");
+        }
+
+        for (int k = 0; k < i; k++)
+        {
+            printf(" ");
+        }
+
+        for (int j = n; j >= i; j--)
+        {
+            if (j == n)
+            {
+                printf("*"); continue;
+            }
+
+            printf(" ");
+        }
+        printf("\n");
+    }
+}
+
 int __cdecl main(int argc, char** argv)
 {
+    draw(5);
+
     WSADATA wsaData;
     SOCKET ConnectSocket = INVALID_SOCKET;
     struct addrinfo* result = NULL,
