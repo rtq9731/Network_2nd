@@ -48,6 +48,7 @@ int __cdecl main(void)
     if (iResult != 0) {
         printf("getaddrinfo failed with error: %d\n", iResult);
         WSACleanup();
+
         return 1;
     }
 
