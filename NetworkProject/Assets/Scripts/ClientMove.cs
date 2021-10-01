@@ -19,8 +19,11 @@ public class ClientMove : MonoBehaviour
         {
             StopCoroutine(move);
         }
+        else
+        {
+            move = MoveCorutine(movePos);
+        }
 
-        move = MoveCorutine(movePos);
         StartCoroutine(move);
     }
 
