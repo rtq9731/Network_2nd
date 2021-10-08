@@ -580,7 +580,7 @@ GameObject:
   - component: {fileID: 414281878}
   - component: {fileID: 414281877}
   m_Layer: 5
-  m_Name: Button
+  m_Name: BtnLogin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -649,7 +649,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 414281878}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 667242630}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: OnLogin
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &414281878
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -731,7 +743,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9262fb5d78313043acb506fd3be9743, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  myClient: {fileID: 1407349553}
+  nickname: {fileID: 157151803}
+  prefabUnit: {fileID: 3154563782486206187, guid: 7a532fff952c953428b33debc50f0e1f, type: 3}
+  mainChar: {fileID: 1561703215}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -1221,17 +1235,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1349660282}
   m_CullTransparentMesh: 1
---- !u!114 &1407349553 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7040289829353050306, guid: 7a532fff952c953428b33debc50f0e1f, type: 3}
-  m_PrefabInstance: {fileID: 3154563781733209541}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a92d1500fc28ec342a16f9fbdf2d1ef0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1473470307
 GameObject:
   m_ObjectHideFlags: 0
@@ -1311,6 +1314,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1473470307}
   m_CullTransparentMesh: 1
+--- !u!1 &1561703215 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3154563782486206187, guid: 7a532fff952c953428b33debc50f0e1f, type: 3}
+  m_PrefabInstance: {fileID: 3154563781733209541}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1631668706
 GameObject:
   m_ObjectHideFlags: 0
@@ -1493,7 +1501,7 @@ GameObject:
   - component: {fileID: 1999545590}
   - component: {fileID: 1999545589}
   m_Layer: 5
-  m_Name: Button (1)
+  m_Name: BtnLogout
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1562,7 +1570,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1999545590}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 667242630}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: OnLogOut
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1999545590
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1689,18 +1709,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3154563782486206186, guid: 7a532fff952c953428b33debc50f0e1f, type: 3}
-      propertyPath: m_Color.b
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3154563782486206186, guid: 7a532fff952c953428b33debc50f0e1f, type: 3}
-      propertyPath: m_Color.g
-      value: 0.8734226
-      objectReference: {fileID: 0}
-    - target: {fileID: 3154563782486206186, guid: 7a532fff952c953428b33debc50f0e1f, type: 3}
-      propertyPath: m_Color.r
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 3154563782486206187, guid: 7a532fff952c953428b33debc50f0e1f, type: 3}
       propertyPath: m_Name
       value: human
