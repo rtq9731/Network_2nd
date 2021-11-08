@@ -37,16 +37,12 @@ public class SocketModule : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
     void Start()
     {
         msgQueue = new Queue<string>();
         gm = GetComponent<GameManager>();
     }
-    // Update is called once per frame
-    void Update()
-    {
-    }
+
     public void Login(string id)
     {
         if (!bRunning)
@@ -131,7 +127,7 @@ public class SocketModule : MonoBehaviour
                     }
                     //readData = "" + returndata;
                     //msgQueue.Enqueue(returndata);
-                    // command detected
+                    // command detected 
                     gm.QueueCommand(returndata);
                     Debug.Log(returndata);
                 }

@@ -5,20 +5,32 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 public class GameManager : MonoBehaviour
 {
+    const char CHAR_TERMINATOR = ';';
+    const char CHAR_COMMA = ',';
+    const int DAMAGE_ATTACK = 30;
+
     private SocketModule tcp;
+
     [SerializeField]
     private InputField nickname;
     string myID;
+
     public GameObject prefabUnit;
     public GameObject mainChar;
+
+    private UnitControl mainControl = null;
+
     Dictionary<string, UnitControl> remoteUnits;
     Queue<string> commandQueue;
+
     // Start is called before the first frame update
     void Start()
     {
         tcp = GetComponent<SocketModule>();
         remoteUnits = new Dictionary<string, UnitControl>();
         commandQueue = new Queue<string>();
+
+        mainControl = mainChar.GetComponent<UnitControl>();
     }
     // Update is called once per frame
     void Update()
@@ -32,14 +44,27 @@ public class GameManager : MonoBehaviour
                 //orgPos = transform.position;
                 targetPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 //targetPos.z = orgPos.z;
-                mainChar.GetComponent<UnitControl>().SetTargetPos(targetPos);
+                mainControl.SetTargetPos(targetPos);
 
-                string data = "#Move#" + targetPos.x + "," + targetPos.y;
+                string data = "#Move#" + targetPos.x + CHAR_COMMA + targetPos.y;
                 SendCommand(data);
                 //SocketModule.GetInstance().SendData(data);
                 //Debug.Log("sent: " + data);
             }
         }
+        else if (Input.GetMouseButtonDown(1))
+        {
+            if(!EventSystem.current.IsPointerOverGameObject())
+            {
+                if(mainControl.GetHP() > 0)
+                {
+                    string data = "#Attack#";
+                    mainChar.GetComponent<UnitControl>().StartFX();
+                    SendCommand(data);
+                }
+            }
+        }
+
     }
     void ProcessQueue()
     {
@@ -69,12 +94,19 @@ public class GameManager : MonoBehaviour
         }
         remoteUnits.Clear();
     }
+    public void OnRevive()
+    {
+        mainChar.GetComponent<UnitControl>().Revive();
+
+        string data = "#Heal#";
+        SendCommand(data);
+    }
     public UnitControl AddUnit(string id)
     {
         UnitControl uc = null;
+        Debug.Log(id);
     if (!remoteUnits.ContainsKey(id))
         {
-
             GameObject newUnit = Instantiate(prefabUnit);
             uc = newUnit.GetComponent<UnitControl>();
             remoteUnits.Add(id, uc);
@@ -93,6 +125,9 @@ public class GameManager : MonoBehaviour
     }
     public void SetMove(string id, string coordinates)
     {
+
+        Debug.Log(id);
+        Debug.Log(remoteUnits.ContainsKey(id));
         if (remoteUnits.ContainsKey(id))
         {
             UnitControl uc = remoteUnits[id];
@@ -110,6 +145,7 @@ public class GameManager : MonoBehaviour
             remoteUnits.Remove(id);
         }
     }
+
     private void LoadHistory(string history)
     {
         var strs = history.Split(',');
@@ -131,11 +167,54 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+
     public void SendCommand(string cmd)
     {
         SocketModule.GetInstance().SendData(cmd);
         Debug.Log("cmd sent: " + cmd);
     }
+
+    public void UserHeal(string id)
+    {
+        if(remoteUnits.ContainsKey(id))
+        {
+            UnitControl uc = remoteUnits[id];
+            uc.Revive();
+        }
+    }
+
+    public void UserAttack(string id)
+    {
+        if(remoteUnits.ContainsKey(id))
+        {
+            UnitControl uc = remoteUnits[id];
+            uc.StartFX();
+        }
+    }
+
+    private void TakeDamage(string remain)
+    {
+        var strs = remain.Split(CHAR_COMMA);
+        for (int i = 0; i < strs.Length; i++)
+        {
+            if(remoteUnits.ContainsKey(strs[i]))
+            {
+                UnitControl uc = remoteUnits[strs[i]];
+                if(uc != null)
+                {
+                    uc.DropHP(DAMAGE_ATTACK);
+                }
+            }
+            else
+            {
+                if(myID.CompareTo(strs[i]) == 0)
+                {
+                    mainControl.DropHP(DAMAGE_ATTACK);
+                }
+            }
+        }
+    }
+
     public string GetID(string cmd)
     {
         int idx = cmd.IndexOf("$");
@@ -146,10 +225,12 @@ public class GameManager : MonoBehaviour
         }
         return id;
     }
+
     public void QueueCommand(string cmd)
     {
         commandQueue.Enqueue(cmd);
     }
+
     public void ProcessCommand(string cmd)
     {
         bool bMore = true;
@@ -171,8 +252,22 @@ public class GameManager : MonoBehaviour
                 if (idx3 > idx2)
                 {
                     string command = cmd.Substring(idx2 + 1, idx3 - idx2 - 1);
-                    string remain = cmd.Substring(idx3 + 1);
-                    Debug.Log("command= " + command + " id=" + id + " remain=" + remain);
+                    string remain = "";
+                    string nextCommand;
+                    int idx4 = cmd.IndexOf(CHAR_TERMINATOR, idx3 + 1);
+                    if(idx4 > idx3)
+                    {
+                        remain = cmd.Substring(idx3 + 1, idx4 - idx3 - 1);
+                        nextCommand = cmd.Substring(idx4 + 1);
+                    }
+                    else
+                    {
+                        remain = cmd.Substring(idx3 + 1, cmd.Length - idx3 - 1);
+                        nextCommand = cmd.Substring(idx3 + 1);
+                    }
+                    
+
+                    Debug.Log("command= " + command + " id=" + id + " remain=" + remain + " next=" + nextCommand);
                     if (myID.CompareTo(id) != 0)
                     {
                         switch (command)
@@ -189,13 +284,23 @@ public class GameManager : MonoBehaviour
                         case "History":
                                 LoadHistory(remain);
                                 break;
+                        case "Heal":
+                                UserHeal(id);
+                                break;
+                        case "Attack":
+                                UserAttack(id);
+                                break;
+                        case "Damage":
+                                TakeDamage(remain);
+                                break;
                         }
                     }
                     else
                     {
                         Debug.Log("Ignore remote command");
                     }
-                    cmd = remain;
+
+                    cmd = nextCommand;
                     if (cmd.Length <= 0)
                     {
                         // No more data to process
